@@ -2,7 +2,7 @@
   "name": "share-a-ride-backend",
   "dockerComposeFile": "./docker-compose.yml",
   "service": "backend",
-  "workspaceFolder": "/workspace/backend",
+  "workspaceFolder": "/workspace/",
   "shutdownAction": "stopCompose",
   "customizations": {
     "vscode": {
