@@ -6,7 +6,7 @@ services:
       MONGO_INITDB_DATABASE: sharearide
     volumes:
       - ../data/mongo:/data/db
-      - ../infra/mongo-init:/docker-entrypoint-initdb.d:ro
+      - ../infra/mongo-seed:/docker-entrypoint-initdb.d:ro
     ports:
       - "27017:27017"
 
