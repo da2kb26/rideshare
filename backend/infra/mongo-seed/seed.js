@@ -5,20 +5,17 @@ db = db.getSiblingDB("sharearide");
 // Helper: always get collection explicitly
 function col(name) { return db.getCollection(name); }
 
-// Clear base collections
+// Clear  collections
 col("insurance").deleteMany({});
 col("car").deleteMany({});
 col("person").deleteMany({});
 col("rideoffers").deleteMany({});
-
-// Also clear flow collections (safe even if empty)
 col("riderequests").deleteMany({});
 col("rides").deleteMany({});
 col("passengers").deleteMany({});
 
-// --- Insurance (3) ---
-// coverage must match your Coverage enum EXACTLY:
-// Haftpflicht | Teilkasko | Vollkasko
+
+// coverage must match exactly: Haftpflicht | Teilkasko | Vollkasko
 col("insurance").insertMany([
   {
     _id: "ins_1",
@@ -46,8 +43,6 @@ col("insurance").insertMany([
   }
 ]);
 
-// --- Cars (3) ---
-// luggageSpacePerPerson -> luggageSpace
 col("car").insertMany([
   {
     _id: "car_1",
@@ -87,8 +82,6 @@ col("car").insertMany([
   }
 ]);
 
-// --- Persons: 3 drivers + 10 passengers ---
-// needChildSeat removed; passengers have carId: null
 col("person").insertMany([
   // Drivers
   {
@@ -149,7 +142,6 @@ col("person").insertMany([
     overallKmCovered: 95000
   },
 
-  // Passengers (10)
   { _id: "person_passenger_1",  name: "Anna Müller",   gender: "female", age: 25, homeCity: "Ulm",     bio: "Student.", phoneNumber: "+49 170 3000001", email: "anna@example.com",  street: "Bergstraße 3",    postalCode: "89075", preferredTransmission: [], preferredCarType: [], preferredMusic: [], carId: null, languages: ["DE"],       chatinessLevel: 2, overallKmCovered: 8000 },
   { _id: "person_passenger_2",  name: "Jonas Klein",   gender: "male",   age: 27, homeCity: "Neu-Ulm", bio: "One suitcase.", phoneNumber: "+49 170 3000002", email: "jonas@example.com", street: "Wiesenweg 9",     postalCode: "89231", preferredTransmission: [], preferredCarType: [], preferredMusic: [], carId: null, languages: ["DE","EN"],  chatinessLevel: 1, overallKmCovered: 12000 },
   { _id: "person_passenger_3",  name: "Laura Schmidt", gender: "female", age: 30, homeCity: "Ulm",     bio: "Quiet passenger.", phoneNumber: "+49 170 3000003", email: "laura@example.com", street: "Gartenweg 2",    postalCode: "89073", preferredTransmission: [], preferredCarType: [], preferredMusic: [], carId: null, languages: ["DE","EN"],  chatinessLevel: 0, overallKmCovered: 25000 },
@@ -162,7 +154,6 @@ col("person").insertMany([
   { _id: "person_passenger_10", name: "Felix Hartmann",gender: "male",   age: 23, homeCity: "Neu-Ulm", bio: "No luggage mostly.", phoneNumber: "+49 170 3000010", email: "felix@example.com", street: "Schillerstraße 8", postalCode: "89233", preferredTransmission: [], preferredCarType: [], preferredMusic: [], carId: null, languages: ["DE"],       chatinessLevel: 2, overallKmCovered: 4000 }
 ]);
 
-// --- RideOffers (5) ---
 col("rideoffers").insertMany([
   { _id: "offer_1", departureCity: "Neu-Ulm",  destinationCity: "Munich",    departureTime: new Date("2026-01-15T08:30:00Z"), seatsAvailable: 3, pricePerPerson: 18.5, luggageCount: 3, driverPersonId: "person_driver_1" },
   { _id: "offer_2", departureCity: "Ulm",      destinationCity: "Stuttgart", departureTime: new Date("2026-01-16T13:00:00Z"), seatsAvailable: 2, pricePerPerson: 22.0, luggageCount: 2, driverPersonId: "person_driver_1" },

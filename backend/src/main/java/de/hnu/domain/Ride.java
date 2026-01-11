@@ -11,13 +11,13 @@ public class Ride {
     @Id
     private String id;
 
-    private String rideOfferId;
+    private String rideOfferId; // references RideOffer.id
 
     private String departureCity;
     private String destinationCity;
     private Instant departureTime;
 
-    private String driverPersonId;
+    private String driverPersonId; // references Person.id
 
     // optional cached remaining capacity (source of truth stays RideOffer)
     private Integer seatsRemaining;

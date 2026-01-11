@@ -17,8 +17,8 @@ public class RideOffer {
     private Integer seatsAvailable;
     private Double pricePerPerson;
 
-    private Integer luggageCount;     // NEW: total luggage capacity remaining
-    private String driverPersonId;    // NEW: references Person.id
+    private Integer luggageCount;
+    private String driverPersonId;    // references Person.id
 
     public RideOffer() {}
 

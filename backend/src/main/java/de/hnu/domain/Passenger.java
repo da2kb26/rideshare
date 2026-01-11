@@ -11,8 +11,8 @@ public class Passenger {
     @Id
     private String id;
 
-    private String rideId;
-    private String personId;
+    private String rideId; // references Ride.id
+    private String personId; // references Person.id
 
     private Integer luggageCount;
 

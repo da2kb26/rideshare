@@ -11,10 +11,10 @@ public class Person {
     private String id;
 
     private String name;
-    private String gender; // keep String for now (enum later)
+    private String gender;
     private Integer age;
 
-    private String profilePicture; // url or base64 later
+    private String profilePicture;
     private String idPicture;
     private String licensePicture;
 

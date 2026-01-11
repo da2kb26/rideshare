@@ -14,29 +14,24 @@ public class RideRequest {
     @Id
     private String id;
 
-    private String rideOfferId;
+    private String rideOfferId; // references RideOffer.id
 
     // passenger identity
-    private String personId;
+    private String personId; // references Person.id
 
     // trip details (passenger-specific)
     private String pickupLocation;
     private String dropoffLocation;
-
     private Instant timestamp;
-
     private Integer luggageCount;
     private Boolean pet;
     private Boolean kid;
-
     private PaymentMethod paymentMethod;
-
-    // lifecycle
     private RideRequestStatus status;
 
     // filled once accepted
-    private String rideId;
-    private String passengerId;
+    private String rideId; // references Ride.id
+    private String passengerId; // references Person.id
 
     public RideRequest() {}
 

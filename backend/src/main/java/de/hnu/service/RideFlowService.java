@@ -62,9 +62,9 @@ public class RideFlowService {
 
         rr = rideRequestRepo.save(rr);
 
-        // Mock driver acceptance after short delay
+        // Mock driver acceptance after short delay of a few seconds
         final String requestId = rr.getId();
-        scheduler.schedule(() -> acceptRideRequest(requestId), Instant.now().plusSeconds(3));
+        scheduler.schedule(() -> acceptRideRequest(requestId), Instant.now().plusSeconds(7));
 
         return rr;
     }
