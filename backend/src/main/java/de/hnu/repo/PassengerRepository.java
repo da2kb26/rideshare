@@ -8,4 +8,5 @@ import de.hnu.domain.Passenger;
 
 public interface PassengerRepository extends MongoRepository<Passenger, String> {
     List<Passenger> findByRideId(String rideId);
+    List<Passenger> findByPersonId(String personId);
 }

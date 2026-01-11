@@ -1,0 +1,233 @@
+<section class="page">
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Find a ride</h1>
+            <p class="subtitle">Results update automatically as you type.</p>
+        </div>
+
+        <!-- Search bar -->
+        <div class="bar" [formGroup]="searchForm">
+            <div class="bar-grid">
+                <label class="field">
+                    <span class="label">Departure city</span>
+                    <input formControlName="departureCity" type="text" placeholder="e.g. Ulm" />
+                </label>
+
+                <label class="field">
+                    <span class="label">Destination city</span>
+                    <input formControlName="destinationCity" type="text" placeholder="e.g. Munich" />
+                </label>
+
+                <label class="field">
+                    <span class="label">Date (optional)</span>
+                    <input formControlName="date" type="date" />
+                </label>
+
+                <div class="status">
+                    <span *ngIf="state === 'loading'">Searching…</span>
+                    <span *ngIf="state === 'done'">Found: {{ results.length }}</span>
+                    <span *ngIf="state === 'idle'">Enter cities</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="bar filters" [formGroup]="filterForm">
+            <div class="bar-grid filters-grid">
+                <label class="field">
+                    <span class="label">Earliest time (optional)</span>
+                    <input formControlName="time" type="time" />
+                </label>
+
+                <label class="field">
+                    <span class="label">Min seats</span>
+                    <select formControlName="minSeats">
+                        <option [ngValue]="1">1+</option>
+                        <option [ngValue]="2">2+</option>
+                        <option [ngValue]="3">3+</option>
+                        <option [ngValue]="4">4+</option>
+                    </select>
+                </label>
+
+                <label class="field">
+                    <span class="label">Min luggage</span>
+                    <select formControlName="minLuggage">
+                        <option [ngValue]="0">0+</option>
+                        <option [ngValue]="1">1+</option>
+                        <option [ngValue]="2">2+</option>
+                        <option [ngValue]="3">3+</option>
+                        <option [ngValue]="4">4+</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="results">
+            <div *ngIf="state === 'idle'" class="empty">
+                Enter departure and destination (or use the landing page), and results will appear.
+            </div>
+
+            <div *ngIf="state === 'error'" class="error">
+                {{ errorMessage }}
+            </div>
+
+            <div *ngIf="state === 'done' && results.length === 0" class="empty">
+                No ride offers found (or none match your filters).
+            </div>
+
+            <div *ngIf="state === 'done' && results.length > 0" class="list">
+                <article class="card" *ngFor="let r of results">
+                    <div class="card-top">
+                        <div class="route">
+                            <div class="cities">
+                                <span class="city">{{ r.departureCity }}</span>
+                                <span class="arrow">→</span>
+                                <span class="city">{{ r.destinationCity }}</span>
+                            </div>
+                            <div class="time">{{ formatInstant(r.departureTime) }}</div>
+                        </div>
+
+                        <div class="price">
+                            <div class="amount">{{ r.pricePerPerson }} €</div>
+                            <div class="per">per person</div>
+                        </div>
+                    </div>
+
+                    <div class="card-mid">
+                        <div class="pill">Seats: <b>{{ r.seatsAvailable }}</b></div>
+                        <div class="pill">Luggage: <b>{{ r.luggageCount }}</b></div>
+                        <div class="pill" *ngIf="r.driverName">Driver: <b>{{ r.driverName }}</b></div>
+                        <div class="pill" *ngIf="r.carMake || r.carModel">Car: <b>{{ r.carMake }} {{ r.carModel }}</b>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <button class="secondary" type="button" (click)="toggleDetails(r.id)">
+                            {{ detailsExpandedOfferId === r.id ? 'Hide details' : 'View details' }}
+                        </button>
+                        <button class="secondary" type="button" (click)="openJoin(r)">
+                            Join ride
+                        </button>
+                    </div>
+                    <div class="details" *ngIf="detailsExpandedOfferId === r.id">
+                        <div *ngIf="detailsLoadingById[r.id]" class="details-loading">Loading details…</div>
+
+                        <div *ngIf="detailsErrorById[r.id]" class="details-error">
+                            {{ detailsErrorById[r.id] }}
+                        </div>
+
+                        <ng-container *ngIf="detailsById[r.id] as d">
+                            <div class="details-grid">
+                                <div class="details-block">
+                                    <div class="details-title">Driver</div>
+                                    <div class="details-row"><span>Name</span><b>{{ d.driver?.name || '-' }}</b></div>
+                                    <div class="details-row"><span>Home city</span><b>{{ d.driver?.homeCity || '-'
+                                            }}</b></div>
+                                    <div class="details-row"><span>Chatiness</span><b>{{ d.driver?.chatinessLevel ?? '-'
+                                            }}</b></div>
+                                    <div class="details-row"><span>KM covered</span><b>{{ d.driver?.overallKmCovered ??
+                                            '-' }}</b></div>
+                                </div>
+
+                                <div class="details-block">
+                                    <div class="details-title">Car</div>
+                                    <div class="details-row"><span>Make</span><b>{{ d.car?.make || '-' }}</b></div>
+                                    <div class="details-row"><span>Model</span><b>{{ d.car?.model || '-' }}</b></div>
+                                    <div class="details-row"><span>Seats</span><b>{{ d.car?.availableSeats ?? '-' }}</b>
+                                    </div>
+                                    <div class="details-row"><span>Luggage space</span><b>{{ d.car?.luggageSpace ?? '-'
+                                            }}</b></div>
+                                    <div class="details-row"><span>Smoking</span><b>{{ d.car?.smokingAllowed ? 'Yes' :
+                                            'No' }}</b></div>
+                                    <div class="details-row"><span>Pets</span><b>{{ d.car?.petsAllowed ? 'Yes' : 'No'
+                                            }}</b></div>
+                                </div>
+
+                                <div class="details-block">
+                                    <div class="details-title">Insurance</div>
+                                    <div class="details-row"><span>Provider</span><b>{{ d.insurance?.name || '-' }}</b>
+                                    </div>
+                                    <div class="details-row"><span>Policy</span><b>{{ d.insurance?.policyName || '-'
+                                            }}</b></div>
+                                    <div class="details-row"><span>Number</span><b>{{ d.insurance?.policyNumber || '-'
+                                            }}</b></div>
+                                    <div class="details-row"><span>Coverage</span><b>{{ d.insurance?.coverage || '-'
+                                            }}</b></div>
+                                    <div class="details-row">
+                                        <span>Passenger insured</span><b>{{ d.insurance?.passengerDriverInsurance ?
+                                            'Yes' : 'No' }}</b>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="joinExpandedOfferId === r.id">
+                        <div class="join" *ngIf="getJoinForm(r) as jf" [formGroup]="jf">
+                            <div class="join-title">Join this ride</div>
+
+                            <div class="join-grid">
+                                <label class="field">
+                                    <span class="label">Pickup location</span>
+                                    <input formControlName="pickupLocation" type="text" />
+                                </label>
+
+                                <label class="field">
+                                    <span class="label">Dropoff location</span>
+                                    <input formControlName="dropoffLocation" type="text" />
+                                </label>
+
+                                <label class="field">
+                                    <span class="label">Luggage count</span>
+                                    <input formControlName="luggageCount" type="number" min="0" />
+                                </label>
+
+                                <label class="field">
+                                    <span class="label">Payment</span>
+                                    <select formControlName="paymentMethod">
+                                        <option value="CASH">Cash</option>
+                                        <option value="PAYPAL">PayPal</option>
+                                        <option value="CARD">Card</option>
+                                    </select>
+                                </label>
+
+                                <label class="check">
+                                    <input formControlName="pet" type="checkbox" />
+                                    <span>Pet</span>
+                                </label>
+
+                                <label class="check">
+                                    <input formControlName="kid" type="checkbox" />
+                                    <span>Kid</span>
+                                </label>
+
+                                <div class="join-actions">
+                                    <button class="join-btn" type="button" (click)="submitJoin(r)" [disabled]="joinStateByOfferId[r.id]?.stage === 'requesting'
+          || joinStateByOfferId[r.id]?.stage === 'waiting'
+          || joinStateByOfferId[r.id]?.stage === 'accepted'">
+                                        {{
+                                        joinStateByOfferId[r.id]?.stage === 'waiting'
+                                        ? 'Waiting…'
+                                        : joinStateByOfferId[r.id]?.stage === 'requesting'
+                                        ? 'Requesting…'
+                                        : joinStateByOfferId[r.id]?.stage === 'accepted'
+                                        ? 'Joined'
+                                        : 'Request seat'
+                                        }}
+                                    </button>
+
+                                    <button class="cancel-btn" type="button" (click)="cancelJoin(r.id)">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="join-msg" *ngIf="joinStateByOfferId[r.id]?.message">
+                                {{ joinStateByOfferId[r.id]?.message }}
+                            </div>
+                        </div>
+                    </ng-container>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
