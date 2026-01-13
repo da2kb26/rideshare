@@ -2,7 +2,7 @@ package de.hnu.web;
 
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.RideRequest;
+import de.hnu.data.RideRequest;
 import de.hnu.repo.RideRequestRepository;
 import de.hnu.service.RideFlowService;
 import de.hnu.web.dto.CreateRideRequestDto;

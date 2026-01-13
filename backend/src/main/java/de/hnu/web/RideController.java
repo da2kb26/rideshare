@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.Passenger;
-import de.hnu.domain.Ride;
+import de.hnu.data.Passenger;
+import de.hnu.data.Person;
+import de.hnu.data.Ride;
 import de.hnu.repo.PassengerRepository;
 import de.hnu.repo.RideRepository;
-import de.hnu.domain.Person;
 import de.hnu.repo.PersonRepository;
 import de.hnu.web.dto.PersonRefDto;
 

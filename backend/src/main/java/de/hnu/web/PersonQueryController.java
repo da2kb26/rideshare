@@ -3,7 +3,7 @@ package de.hnu.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.Person;
+import de.hnu.data.Person;
 import de.hnu.repo.PersonRepository;
 import de.hnu.web.dto.PersonContactDto;
 

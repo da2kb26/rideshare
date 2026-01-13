@@ -1,24 +1,32 @@
-package de.hnu.domain;
+package de.hnu.data;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import de.hnu.data.enums.PaymentMethod;
 
-import de.hnu.domain.enums.PaymentMethod;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Document("passengers")
+@Entity
+@Table(name = "passenger")
 public class Passenger {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String rideId; // references Ride.id
     private String personId; // references Person.id
-
+    
     private Integer luggageCount;
 
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
-    private Boolean paymentOutstanding;
 
+    private Boolean paymentOutstanding;
     private String pickupLocation;
     private String dropoffLocation;
 

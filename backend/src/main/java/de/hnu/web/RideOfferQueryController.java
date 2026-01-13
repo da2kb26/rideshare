@@ -8,10 +8,9 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.Car;
-import de.hnu.domain.Insurance;
-import de.hnu.domain.Person;
-import de.hnu.domain.RideOffer;
+import de.hnu.data.Car;
+import de.hnu.data.Person;
+import de.hnu.data.RideOffer;
 import de.hnu.repo.CarRepository;
 import de.hnu.repo.InsuranceRepository;
 import de.hnu.repo.PersonRepository;

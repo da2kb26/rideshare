@@ -1,5 +1,5 @@
 # rideshare
-Prototype rideshare with a Java Backend, an Angular frontend and a MongoDB Database.
+Prototype rideshare with a Java Backend, an Angular frontend and a DerbyDB Database.
 
 # Setup backend
 1. Install Docker Desktop
@@ -12,7 +12,7 @@ Prototype rideshare with a Java Backend, an Angular frontend and a MongoDB Datab
    1. Make sure you just select the /workspace folder and no subfolder of the workspace (workspace folder means backend folder)
 5. In order to start the api now, open a terminal in the workspace and type ```mvn spring-boot:run```
 
-=> Your backend is running with a MongoDb on its side
+=> Your backend is running with a DerbyDB integrated
 
 # Setup frontend
 1. Make sure you have node.js installed (```node -v```) - See here: https://nodejs.org/en/download

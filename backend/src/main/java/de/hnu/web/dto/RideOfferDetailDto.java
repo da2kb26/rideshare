@@ -1,9 +1,9 @@
 package de.hnu.web.dto;
 
-import de.hnu.domain.Car;
-import de.hnu.domain.Insurance;
-import de.hnu.domain.Person;
-import de.hnu.domain.RideOffer;
+import de.hnu.data.Car;
+import de.hnu.data.Insurance;
+import de.hnu.data.Person;
+import de.hnu.data.RideOffer;
 
 public class RideOfferDetailDto {
     public RideOffer offer;

@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.Passenger;
-import de.hnu.domain.Ride;
+import de.hnu.data.Passenger;
+import de.hnu.data.Ride;
 import de.hnu.repo.PassengerRepository;
 import de.hnu.repo.RideRepository;
 import de.hnu.web.dto.RideHistoryDto;

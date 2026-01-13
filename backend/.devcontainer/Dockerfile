@@ -13,7 +13,4 @@ RUN rm -f usr/local/apache-maven-3.9.9-bin.tar.gz
 ENV MAVEN_HOME=/usr/local/apache-maven-3.9.9
 ENV PATH="${PATH}:${MAVEN_HOME}/bin"
 
-RUN useradd -ms /bin/bash student
-USER student
-
 CMD ["tail","-f","/dev/null"]

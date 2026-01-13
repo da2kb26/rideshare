@@ -1,10 +1,13 @@
-package de.hnu.domain;
+package de.hnu.data;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Document("car")
+@Entity
+@Table(name = "car")
 public class Car {
+
     @Id
     private String id;
 
@@ -17,7 +20,7 @@ public class Car {
     private String plate;
     private Integer buildYear;
 
-    private String insuranceId; // references Insurance.id
+    private String insuranceId; // references Insurance.id (kept simple)
 
     public Car() {}
 

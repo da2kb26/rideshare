@@ -1,17 +1,24 @@
-package de.hnu.domain;
+package de.hnu.data;
 
 import java.time.Instant;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import de.hnu.data.enums.PaymentMethod;
+import de.hnu.data.enums.RideRequestStatus;
 
-import de.hnu.domain.enums.PaymentMethod;
-import de.hnu.domain.enums.RideRequestStatus;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Document("riderequests")
+@Entity
+@Table(name = "riderequest")
 public class RideRequest {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     private String rideOfferId; // references RideOffer.id
@@ -26,7 +33,11 @@ public class RideRequest {
     private Integer luggageCount;
     private Boolean pet;
     private Boolean kid;
+
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+    
+    @Enumerated(EnumType.STRING)
     private RideRequestStatus status;
 
     // filled once accepted

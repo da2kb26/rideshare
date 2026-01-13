@@ -1,0 +1,18 @@
+----------------------------------------------------------------
+Tue Jan 13 22:25:15 UTC 2026:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.16.1.1 - (1901046): instance a816c00e-019b-b976-94a7-0000003586a0 
+on database directory /workspace/data/derby/sharearide with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@bc05c122 
+Loaded from file:/root/.m2/repository/org/apache/derby/derby/10.16.1.1/derby-10.16.1.1.jar
+java.vendor=IBM Corporation
+java.runtime.version=17.0.10+7
+java.fullversion=17.0.10+7
+JRE 17 Linux aarch64-64-Bit Compressed References 20240116_621 (JIT enabled, AOT enabled)
+OpenJ9   - 2c3d78b48
+OMR      - ea8124dbc
+JCL      - 2aad089841f based on jdk-17.0.10+7
+user.dir=/workspace
+os.name=Linux
+os.arch=aarch64
+os.version=6.12.54-linuxkit
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

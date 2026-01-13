@@ -1,11 +1,15 @@
-package de.hnu.domain;
+package de.hnu.data;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import de.hnu.data.enums.Coverage;
 
-import de.hnu.domain.enums.Coverage;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Document("insurance")
+@Entity
+@Table(name = "insurance")
 public class Insurance {
     @Id
     private String id;
@@ -13,8 +17,10 @@ public class Insurance {
     private String name;
     private String policyName;
     private String policyNumber;
-    private Coverage coverage;
     private Boolean passengerDriverInsurance;
+
+    @Enumerated(EnumType.STRING)
+    private Coverage coverage;
 
     public Insurance() {}
 

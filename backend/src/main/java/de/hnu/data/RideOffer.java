@@ -1,11 +1,13 @@
-package de.hnu.domain;
+package de.hnu.data;
 
 import java.time.Instant;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@Document("rideoffers")
+@Entity
+@Table(name = "rideoffer")
 public class RideOffer {
     @Id
     private String id;
