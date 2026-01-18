@@ -1,6 +1,7 @@
 package de.hnu.repo;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import de.hnu.domain.Insurance;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InsuranceRepository extends MongoRepository<Insurance, String> {}
+import de.hnu.data.Insurance;
+
+public interface InsuranceRepository extends JpaRepository<Insurance, String> {}

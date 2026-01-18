@@ -1,4 +1,5 @@
-# MongoDB persistent data (do not commit)
-data/mongo/*
-!data/mongo/.gitkeep
+# Derby persistent data (do not commit)
+data/derby/*
+!data/derby/.gitkeep
+
 /target/*

@@ -1,6 +1,6 @@
 package de.hnu.web.dto;
 
-import de.hnu.domain.enums.PaymentMethod;
+import de.hnu.data.enums.PaymentMethod;
 
 public class CreateRideRequestDto {
     public String rideOfferId;

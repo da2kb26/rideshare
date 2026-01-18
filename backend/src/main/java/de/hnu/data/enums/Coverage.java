@@ -1,4 +1,4 @@
-package de.hnu.domain.enums;
+package de.hnu.data.enums;
 
 public enum Coverage {
     Haftpflicht,

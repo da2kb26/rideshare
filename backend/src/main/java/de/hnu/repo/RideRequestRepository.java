@@ -2,10 +2,10 @@ package de.hnu.repo;
 
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hnu.domain.RideRequest;
+import de.hnu.data.RideRequest;
 
-public interface RideRequestRepository extends MongoRepository<RideRequest, String> {
+public interface RideRequestRepository extends JpaRepository<RideRequest, String> {
     List<RideRequest> findByRideOfferId(String rideOfferId);
 }

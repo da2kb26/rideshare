@@ -3,11 +3,11 @@ package de.hnu.repo;
 import java.time.Instant;
 import java.util.List;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import de.hnu.domain.RideOffer;
+import de.hnu.data.RideOffer;
 
-public interface RideOfferRepository extends MongoRepository<RideOffer, String> {
+public interface RideOfferRepository extends JpaRepository<RideOffer, String> {
 
     List<RideOffer> findByDepartureCityIgnoreCaseAndDestinationCityIgnoreCase(
             String departureCity,

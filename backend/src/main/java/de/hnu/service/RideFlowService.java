@@ -2,19 +2,15 @@ package de.hnu.service;
 
 import java.time.Instant;
 
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import de.hnu.domain.Passenger;
-import de.hnu.domain.Ride;
-import de.hnu.domain.RideOffer;
-import de.hnu.domain.RideRequest;
-import de.hnu.domain.enums.RideRequestStatus;
+import de.hnu.data.Passenger;
+import de.hnu.data.Ride;
+import de.hnu.data.RideOffer;
+import de.hnu.data.RideRequest;
+import de.hnu.data.enums.RideRequestStatus;
 import de.hnu.repo.PassengerRepository;
 import de.hnu.repo.RideOfferRepository;
 import de.hnu.repo.RideRepository;
@@ -28,7 +24,6 @@ public class RideFlowService {
     private final RideRepository rideRepo;
     private final PassengerRepository passengerRepo;
     private final RideOfferRepository rideOfferRepo;
-    private final MongoTemplate mongoTemplate;
     private final TaskScheduler scheduler;
 
     public RideFlowService(
@@ -36,14 +31,12 @@ public class RideFlowService {
             RideRepository rideRepo,
             PassengerRepository passengerRepo,
             RideOfferRepository rideOfferRepo,
-            MongoTemplate mongoTemplate,
             TaskScheduler scheduler
     ) {
         this.rideRequestRepo = rideRequestRepo;
         this.rideRepo = rideRepo;
         this.passengerRepo = passengerRepo;
         this.rideOfferRepo = rideOfferRepo;
-        this.mongoTemplate = mongoTemplate;
         this.scheduler = scheduler;
     }
 
@@ -64,57 +57,72 @@ public class RideFlowService {
 
         // Mock driver acceptance after short delay of a few seconds
         final String requestId = rr.getId();
-        scheduler.schedule(() -> acceptRideRequest(requestId), Instant.now().plusSeconds(7));
+        scheduler.schedule(
+                () -> acceptRideRequest(requestId),
+                Instant.now().plusSeconds(7)
+        );
 
         return rr;
     }
 
+    /**
+     * Accepts a ride request:
+     * - checks capacity on the linked RideOffer
+     * - updates seats/luggage on the offer
+     * - ensures a Ride exists
+     * - creates a Passenger entry
+     * - updates the RideRequest status
+     *
+     * Marked @Transactional so all DB changes are committed together.
+     */
+    @Transactional
     public RideRequest acceptRideRequest(String rideRequestId) {
         RideRequest rr = rideRequestRepo.findById(rideRequestId)
                 .orElseThrow(() -> new IllegalArgumentException("RideRequest not found: " + rideRequestId));
 
         if (rr.getStatus() != RideRequestStatus.PENDING) {
-            return rr; // already processed
+            // already processed (ACCEPTED or REJECTED) – nothing to do
+            return rr;
         }
 
-        int seatsConsumed = 1 + (Boolean.TRUE.equals(rr.getPet()) ? 1 : 0) + (Boolean.TRUE.equals(rr.getKid()) ? 1 : 0);
+        int seatsConsumed = 1
+                + (Boolean.TRUE.equals(rr.getPet()) ? 1 : 0)
+                + (Boolean.TRUE.equals(rr.getKid()) ? 1 : 0);
+
         int luggageRequested = rr.getLuggageCount() != null ? rr.getLuggageCount() : 0;
 
-        // Atomic capacity update on RideOffer: only succeed if enough seats & luggage remain
-        Query q = new Query(Criteria.where("_id").is(rr.getRideOfferId())
-                .and("seatsAvailable").gte(seatsConsumed)
-                .and("luggageCount").gte(luggageRequested));
+        // Load the RideOffer and check capacity
+        RideOffer offer = rideOfferRepo.findById(rr.getRideOfferId())
+                .orElseThrow(() -> new IllegalArgumentException("RideOffer not found: " + rr.getRideOfferId()));
 
-        Update u = new Update()
-                .inc("seatsAvailable", -seatsConsumed)
-                .inc("luggageCount", -luggageRequested);
+        Integer seatsAvailable = offer.getSeatsAvailable() != null ? offer.getSeatsAvailable() : 0;
+        Integer luggageAvailable = offer.getLuggageCount() != null ? offer.getLuggageCount() : 0;
 
-        RideOffer updatedOffer = mongoTemplate.findAndModify(
-                q,
-                u,
-                FindAndModifyOptions.options().returnNew(true),
-                RideOffer.class
-        );
-
-        if (updatedOffer == null) {
+        if (seatsAvailable < seatsConsumed || luggageAvailable < luggageRequested) {
             rr.setStatus(RideRequestStatus.REJECTED);
             return rideRequestRepo.save(rr);
         }
 
+        // Update offer capacity
+        offer.setSeatsAvailable(seatsAvailable - seatsConsumed);
+        offer.setLuggageCount(luggageAvailable - luggageRequested);
+
+        var roffer = rideOfferRepo.save(offer);
+
         // Ensure Ride exists for this offer
-        Ride ride = rideRepo.findByRideOfferId(updatedOffer.getId()).orElseGet(() -> {
+        Ride ride = rideRepo.findByRideOfferId(roffer.getId()).orElseGet(() -> {
             Ride r = new Ride();
-            r.setRideOfferId(updatedOffer.getId());
-            r.setDepartureCity(updatedOffer.getDepartureCity());
-            r.setDestinationCity(updatedOffer.getDestinationCity());
-            r.setDepartureTime(updatedOffer.getDepartureTime());
-            r.setDriverPersonId(updatedOffer.getDriverPersonId());
+            r.setRideOfferId(roffer.getId());
+            r.setDepartureCity(roffer.getDepartureCity());
+            r.setDestinationCity(roffer.getDestinationCity());
+            r.setDepartureTime(roffer.getDepartureTime());
+            r.setDriverPersonId(roffer.getDriverPersonId());
             return rideRepo.save(r);
         });
 
-        // Cache remaining (optional)
-        ride.setSeatsRemaining(updatedOffer.getSeatsAvailable());
-        ride.setLuggageRemaining(updatedOffer.getLuggageCount());
+        // Cache remaining capacity on Ride (optional but kept for consistency)
+        ride.setSeatsRemaining(roffer.getSeatsAvailable());
+        ride.setLuggageRemaining(roffer.getLuggageCount());
         ride = rideRepo.save(ride);
 
         // Create Passenger
@@ -132,9 +140,11 @@ public class RideFlowService {
 
         p = passengerRepo.save(p);
 
+        // Link back to RideRequest
         rr.setRideId(ride.getId());
         rr.setPassengerId(p.getId());
         rr.setStatus(RideRequestStatus.ACCEPTED);
+
         return rideRequestRepo.save(rr);
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import de.hnu.domain.RideOffer;
+import de.hnu.data.RideOffer;
 import de.hnu.repo.RideOfferRepository;
 
 @RestController

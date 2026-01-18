@@ -1,6 +1,7 @@
 package de.hnu.repo;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import de.hnu.domain.Person;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PersonRepository extends MongoRepository<Person, String> {}
+import de.hnu.data.Person;
+
+public interface PersonRepository extends JpaRepository<Person, String> {}

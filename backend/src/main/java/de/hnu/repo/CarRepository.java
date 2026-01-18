@@ -1,6 +1,7 @@
 package de.hnu.repo;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
-import de.hnu.domain.Car;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CarRepository extends MongoRepository<Car, String> {}
+import de.hnu.data.Car;
+
+public interface CarRepository extends JpaRepository<Car, String> {}
